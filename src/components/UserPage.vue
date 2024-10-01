@@ -21,23 +21,69 @@
                     <b-tab title="Products" @click="getAllProducts()" active>
                         <b-card-text>
 
+                            <!-- <div class="container mt-4"> -->
+                            <!-- <div class="row"> -->
+                            <!-- <div class="col-md-4" v-for="product in allProducts" :key="product.id"> -->
+                            <!-- <b-card :title="product.productName" class="mb-3"> -->
+                            <!-- <b-img :src="product.productImage" alt="Product Image" fluid /> -->
+                            <!-- <b-img :src="getImageUrl(product.productImage)" alt="Product Image" fluid></b-img> -->
+                            <!-- <b-card-text> -->
+                            <!-- {{ product.productDescription }} -->
+                            <!-- </b-card-text> -->
+                            <!-- <b-card-footer> -->
+                            <!-- <strong>Price: {{ product.sellingPrice }}Rs</strong> -->
+                            <!-- <b-button variant="primary" @click="orderModal(product)">Add to Cart</b-button> -->
+                            <!-- </b-card-footer> -->
+                            <!-- </b-card> -->
+                            <!-- </div> -->
+                            <!-- </div> -->
+                            <!-- </div> -->
+
                             <div class="container mt-4">
+                                <!-- <div class="row mb-3"> -->
+                                <!-- <div class="col-md-6"> -->
+                                <!-- <b-form inline> -->
+                                <!-- <b-form-group label="Search" label-for="search-input"> -->
+                                <!-- <b-form-input id="search-input" v-model="searchTerm" placeholder="Search for products..." class="mr-2"></b-form-input> -->
+                                <!-- </b-form-group> -->
+                                <!-- <b-button variant="primary" @click="clearSearch">Clear</b-button> -->
+                                <!-- </b-form> -->
+                                <!-- </div> -->
+                                <!-- </div> -->
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <b-form inline>
+                                            <b-form-group label="Search" label-for="search-input" class="mb-0">
+                                                <b-input-group>
+                                                    <b-form-input id="search-input" v-model="searchTerm" placeholder="Search for products..." class="mr-2"></b-form-input>
+                                                    <b-input-group-append>
+                                                        <b-button v-if="searchTerm" @click="clearSearch" variant="outline-secondary" aria-label="Clear search">
+                                                            <b-icon icon="x-circle" variant="danger"></b-icon>
+                                                        </b-button>
+                                                    </b-input-group-append>
+                                                </b-input-group>
+                                            </b-form-group>
+                                        </b-form>
+                                    </div>
+                                </div>
+
                                 <div class="row">
-                                    <div class="col-md-4" v-for="product in allProducts" :key="product.id">
+                                    <div class="col-md-4" v-for="product in filteredProducts" :key="product.id">
                                         <b-card :title="product.productName" class="mb-3">
                                             <b-img :src="product.productImage" alt="Product Image" fluid />
-                                            <!-- <b-img :src="getImageUrl(product.productImage)" alt="Product Image" fluid></b-img> -->
                                             <b-card-text>
                                                 {{ product.productDescription }}
                                             </b-card-text>
                                             <b-card-footer>
-                                                <strong>Price: {{ product.sellingPrice }}Rs</strong>
+                                                <strong>Price: {{ product.sellingPrice }} Rs</strong>
                                                 <b-button variant="primary" @click="orderModal(product)">Add to Cart</b-button>
                                             </b-card-footer>
                                         </b-card>
                                     </div>
                                 </div>
                             </div>
+
                             <b-modal id="orderModal" title="Place Order" hide-header-close no-close-on-backdrop>
                                 <div class="my-4">
                                     <form>
@@ -118,6 +164,7 @@ export default {
     },
     data() {
         return {
+            searchTerm: '',
             userDetails: null,
             currentPage: 1,
             perPage: 5,
@@ -206,6 +253,13 @@ export default {
             const start = (this.currentPage - 1) * this.perPage;
             return this.sortedOrders.slice(start, start + this.perPage);
         },
+        filteredProducts() {
+            return this.allProducts.filter(product => {
+                return product.productName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                    product.productDescription.toLowerCase().includes(this.searchTerm.toLowerCase());
+            });
+        }
+
     },
 
     async mounted() {
@@ -238,6 +292,10 @@ export default {
         // enlargeImage() {
         // this.$bvModal.show('imageModal');
         // },
+
+        clearSearch() {
+            this.searchTerm = '';
+        },
 
         fetchUserDetails() {
             // Retrieve user details from local storage
@@ -421,16 +479,18 @@ export default {
         checkLocalStorageAndRedirect() {
             if (!localStorage.getItem('userDetails')) {
                 this.$router.push({
-                    name: 'home'
+                    name: 'userHome'
                 });
             }
         },
         logout() {
             console.log("=====Logout Calling=====");
             localStorage.clear();
-            this.$router.push({
-                name: 'login'
-            });
+            // window.location.reload();
+            this.$router.push('/e_comerce');
+            // this.$router.push({
+            // name: 'userHome'
+            // });
         },
 
     },

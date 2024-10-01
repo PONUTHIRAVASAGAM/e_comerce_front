@@ -529,14 +529,14 @@ export default {
         checkLocalStorageAndRedirect() {
             if (!localStorage.getItem('userDetails')) {
                 this.$router.push({
-                    name: 'login'
+                    name: 'userHome'
                 });
             }
         },
         logout() {
             localStorage.clear();
             this.$router.push({
-                name: 'login'
+                name: 'userHome'
             });
         },
 

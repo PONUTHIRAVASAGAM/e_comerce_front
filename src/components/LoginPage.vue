@@ -97,14 +97,14 @@ export default {
                     console.log("=====User=====", user);
                     if (user.user.role === "USER") {
                         this.$router.push({
-                            name: 'user',
+                            name: 'userDetails',
                             params: {
                                 userId: user.user.userId,
                             }
                         });
                     } else if (user.user.role === "ADMIN") {
                         this.$router.push({
-                            name: 'admin',
+                            name: 'adminDetails',
                             params: {
                                 userId: user.user.userId,
                             }
