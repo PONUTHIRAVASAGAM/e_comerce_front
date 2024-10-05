@@ -360,15 +360,18 @@ export default {
             }
         },
 
-        // getImageUrl(imagePath) {
+        getImageUrl(imagePath) {
         // Use only the filename from the path and ensure correct path handling
-        // const fileName = imagePath.split('\\').pop(); // Get the file name
-        // const url = `http://localhost:3000/uploads/${fileName}`; // Construct the URL
-        // console.log("Image URL:", url); // Log the URL for debugging
-        // return url;
-        // },
-        // 
+        const fileName = imagePath.split('\\').pop(); // Get the file name
+        const url = `http://localhost:3000/uploads/${fileName}`; // Construct the URL
+        console.log("Image URL:", url); // Log the URL for debugging
+        return url;
+        },
+        
         getAllProducts() {
+            // var ax = axios.create({
+            // baseURL: this.restServerLocation,
+            // });
             axios.get('http://localhost:3000/api/products/viewAllProducts')
                 .then((res) => {
                     this.allProducts = res.data;
@@ -483,15 +486,30 @@ export default {
                 });
             }
         },
-        logout() {
-            console.log("=====Logout Calling=====");
+
+        clearLocalStorage() {
             localStorage.clear();
-            // window.location.reload();
-            this.$router.push('/e_comerce');
-            // this.$router.push({
-            // name: 'userHome'
-            // });
         },
+
+        async logout() {
+            console.log("===== Logout Calling =====");
+            // localStorage.clear();
+            await this.clearLocalStorage();
+            await this.fetchUserDetails();
+            // location.reload();
+            this.$router.push('/e_comerce');
+        },
+
+        // logout() {
+        // console.log("=====Logout Calling=====");
+        // localStorage.clear();
+        // window.location.reload();
+        // this.fetchUserDetails();
+        // this.$router.push('/e_comerce');
+        // this.$router.push({
+        // name: 'userHome'
+        // });
+        // },
 
     },
 };

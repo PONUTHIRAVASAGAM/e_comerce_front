@@ -20,12 +20,12 @@
         </div>
     </form>
 
-    <form v-else @submit.prevent="signUp(username, password)" class="auth-form">
+    <form v-else @submit.prevent="signUp(userName, email)" class="auth-form">
         <h2 class="auth-title">Sign Up</h2>
 
         <div class="form-group">
-            <label for="signup-username">Username:</label>
-            <input v-model="username" type="text" id="signup-username" placeholder="Enter your username" required />
+            <label for="signup-userName">Username:</label>
+            <input v-model="userName" type="text" id="signup-userName" placeholder="Enter your username" required />
         </div>
 
         <div class="form-group">
@@ -49,7 +49,7 @@ import Swal from 'sweetalert2';
 export default {
     data() {
         return {
-            username: '',
+            userName: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -60,7 +60,7 @@ export default {
 
     mounted() {
         const token = localStorage.getItem('jwtToken');
-        console.log("=====Mounted Calling=====",token);
+        console.log("=====Mounted Calling=====", token);
 
         if (token) {
             console.log("=====Mounted Calling=====");
@@ -76,7 +76,7 @@ export default {
         },
 
         resetForm() {
-            this.username = '';
+            this.userName = '';
             this.email = '';
             this.password = '';
             this.confirmPassword = '';
@@ -123,11 +123,13 @@ export default {
                 });
         },
 
-        signUp(username) {
+        signUp(userName, email) {
+            console.log("=====userName=====", userName);
+            console.log("=====email=====", email);
 
             const data = {
-                userName: username,
-                email: this.email,
+                userName: userName,
+                email: email,
                 password: '',
                 role: 'USER',
             };
@@ -138,7 +140,7 @@ export default {
 
             ax.post('api/users/register', data)
                 .then((response) => {
-                    // console.log("======response.data======",response.data);                    
+                    console.log("======response.data======", response.data);
                     if (response.data.otpSent) {
                         Swal.fire({
                             title: 'OTP Sent!',
@@ -147,7 +149,7 @@ export default {
                             confirmButtonText: 'OK',
                         });
 
-                        this.verifyOtp(username, this.email, response.data.otp);
+                        this.verifyOtp(userName, email, response.data.otp);
                     }
                 })
                 .catch((error) => {
@@ -161,7 +163,9 @@ export default {
                 });
         },
 
-        verifyOtp(email) {
+        verifyOtp() {
+            console.log("=====Email=====", this.email);
+
             Swal.fire({
                 title: 'Enter OTP and Password',
                 html: `
@@ -198,8 +202,8 @@ export default {
                     console.log("=====Entered OTP=====", otp);
 
                     const updateData = {
-                        // username,
-                        email,
+                        // userName,
+                        email:this.email,
                         otp,
                         newPassword
                     };
@@ -213,7 +217,8 @@ export default {
                             Swal.fire('Success!', 'Your account has been created and your password is set.', 'success');
                             this.toggleForm();
                         })
-                        .catch(() => {
+                        .catch((err) => {
+                            console.log("=====Error Response=====", err);
                             Swal.fire({
                                 title: 'Error!',
                                 text: 'Failed to set password',

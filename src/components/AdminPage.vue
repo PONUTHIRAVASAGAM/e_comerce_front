@@ -311,7 +311,6 @@ export default {
 
     methods: {
 
-        
         // demoFunction(columnDetails, cardName) {
         // console.log("=====Demo Function Calling=====");
         // console.log("=====columnDetails=====", columnDetails);
@@ -335,7 +334,7 @@ export default {
         },
 
         deleteOrder(item) {
-            axios.delete('http://localhost:3000/api/products/deleteProductById/'+item.productId)
+            axios.delete('http://localhost:3000/api/products/deleteProductById/' + item.productId)
                 .then(response => {
                     console.log('Order deleted:', response.data);
                     Swal.fire({
@@ -505,7 +504,7 @@ export default {
         },
 
         getProductsByUserId() {
-            axios.get('http://localhost:3000/api/products/viewProducts/'+this.user.user.userId)
+            axios.get('http://localhost:3000/api/products/viewProducts/' + this.user.user.userId)
                 .then((res) => {
                     this.products = res.data;
                     console.log("Fetched Products:", this.products);
@@ -516,7 +515,7 @@ export default {
         },
 
         getOrdersByUserId() {
-            axios.get('http://localhost:3000/api/orders/viewOwnerOrders/'+this.user.user.userId)
+            axios.get('http://localhost:3000/api/orders/viewOwnerOrders/' + this.user.user.userId)
                 .then((res) => {
                     this.orders = res.data;
                     console.log("Fetched Orders:", this.orders);
@@ -533,12 +532,32 @@ export default {
                 });
             }
         },
-        logout() {
-            localStorage.clear();
-            this.$router.push({
-                name: 'userHome'
-            });
+
+        fetchUserDetails() {
+            // Retrieve user details from local storage
+            const userData = localStorage.getItem('userDetails');
+            if (userData) {
+                this.userDetails = JSON.parse(userData); // Parse the JSON string
+            }
+            console.log("=====userDetails=====", this.userDetails);
         },
+        clearLocalStorage() {
+            localStorage.clear();
+        },
+        async logout() {
+            console.log("===== Logout Calling =====");
+            // localStorage.clear();
+            await this.clearLocalStorage();
+            await this.fetchUserDetails();
+            // location.reload();
+            this.$router.push('/e_comerce');
+        },
+        // logout() {
+        // localStorage.clear();
+        // this.$router.push({
+        // name: 'userHome'
+        // });
+        // },
 
         cancelProduct() {
             this.productName = '';
